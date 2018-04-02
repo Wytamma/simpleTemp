@@ -37,7 +37,6 @@ def create_probe(probe_id):
 
 def run():
     for p in all_probes():
-        print(p)
         probe = Probe.get(probe_id=p.probe_id)
         if not probe:
             create_probe(p.probe_id)
@@ -45,6 +44,7 @@ def run():
         if temp is None:
             print('Could not read probe:', p)
             continue
+        print(p, temp)
         add_temp_rec(temp, datetime.now(), p.probe_id)
 
 if __name__ == "main":
