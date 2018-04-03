@@ -1,7 +1,5 @@
 import argparse
-from pony import orm
 from datetime import datetime
-from ds18b20 import all_probes
 from time import sleep
 
 # Build argument parser, this allows you to parse comands from the cli
@@ -19,7 +17,7 @@ samping_interval = args['interval']
 def run():
     r = requests.get(url+'records/example1?limit=1')
     print(r.json())
-    
+
 if __name__ == "main":
     while True:
         run()
