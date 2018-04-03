@@ -21,17 +21,23 @@ local_probes_list = []
 def run():
     for p in all_probes():
         if p.probe_id not in local_probes_list:
-            r = requests.post(url + 'probes', data = {'probe_id':p.probe_id})
-            print(p, r.json()['message'])
-            local_probes_list.append(p.probe_id)
+            try:
+                r = requests.post(url + 'probes', data = {'probe_id':p.probe_id})
+                print(p, r.json()['message'])
+                local_probes_list.append(p.probe_id)
+            except requests.exceptions.ConnectionError:
+                print('ConnectionError: could not connect to host.')
         temp = p.read_temperature()
         if temp is None:
             print('Could not read probe:', p)
             continue
         print(datetime.now().isoformat(), p, temp)
-        r = requests.post(url+'records/'+p.probe_id, data = {'temperature':temp, 'time':datetime.now().isoformat()})
-        if r.status_code != requests.codes.ok:
-            print(p, 'Database request failed.')
+        try:
+            r = requests.post(url + 'records/' + p.probe_id, data = {'temperature':temp, 'time':datetime.now().isoformat()})
+            if r.status_code != requests.codes.ok:
+                print(p, 'Database request failed.')
+        except requests.exceptions.ConnectionError:
+            print('ConnectionError: could not connect to host.')
 
 if __name__ == '__main__':
     while True:
