@@ -19,8 +19,6 @@ samping_interval = args['interval']
 local_probes_list = [] 
 
 def run():
-    r = requests.get(url+'records/example1?limit=1')
-    print(r.json())
     for p in all_probes():
         if p.probe_id not in local_probes_list:
             r = requests.post(url + 'probes', data = {'probe_id':p.probe_id})
@@ -33,7 +31,7 @@ def run():
         print(datetime.now().isoformat(), p, temp)
         r = requests.post(url+'records/'+p.probe_id, data = {'temperature':temp, 'time':datetime.now().isoformat()})
         if r.status_code != requests.codes.ok:
-            print(p, 'Database reuest failed.')
+            print(p, 'Database request failed.')
 
 if __name__ == '__main__':
     while True:
