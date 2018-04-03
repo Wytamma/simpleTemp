@@ -1,6 +1,7 @@
 import argparse
 from datetime import datetime
 from time import sleep
+import requests
 
 # Build argument parser, this allows you to parse comands from the cli
 parser = argparse.ArgumentParser(description='Simple script that reads all connected DS18B20 temperature probes and saves to a local DB.')
