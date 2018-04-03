@@ -23,8 +23,9 @@ def run():
     print(r.json())
     for p in all_probes():
         if p.probe_id not in local_probes_list:
-            r = requests.post(url+'probes', data = {'probe_id':p.probe_id})
-            local_probes_list.append(p.probe_id})
+            r = requests.post(url + 'probes', data = {'probe_id':p.probe_id})
+            print(p, r.json()['message'])
+            local_probes_list.append(p.probe_id)
         temp = p.read_temperature()
         if temp is None:
             print('Could not read probe:', p)
@@ -33,7 +34,7 @@ def run():
         r = requests.post(url+'records/'+p.probe_id, data = {'temperature':temp, 'time':datetime.now().isoformat()})
         if r.status_code != requests.codes.ok:
             print(p, 'Database reuest failed.')
-            
+
 if __name__ == '__main__':
     while True:
         run()
