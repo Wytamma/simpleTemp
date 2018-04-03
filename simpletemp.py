@@ -9,10 +9,9 @@ parser = argparse.ArgumentParser(description='Simple script that reads all conne
 parser.add_argument('-i', '--interval', help='Sampling interval (seconds)', type=int, default=600)
 parser.add_argument('-d', '--database', help='IP address of database server', type=str, default='0.0.0.0:5000')
 
-
 args = vars(parser.parse_args())
-# default vars
 
+# default vars
 url = 'http://{}/'.format(args['database'])
 samping_interval = args['interval']
 
