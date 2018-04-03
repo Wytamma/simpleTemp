@@ -18,7 +18,7 @@ def run():
     r = requests.get(url+'records/example1?limit=1')
     print(r.json())
 
-if __name__ == "main":
+if __name__ == '__main__':
     while True:
         run()
         sleep(samping_interval)
