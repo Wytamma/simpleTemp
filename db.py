@@ -1,5 +1,5 @@
-from flask import Flask, request
-from flask_restful import Resource, Api, reqparse, abort, make_response, jsonify
+from flask import Flask, request, abort, make_response, jsonify
+from flask_restful import Resource, Api, reqparse
 from pony import orm
 from datetime import datetime
 import os
@@ -58,8 +58,8 @@ class ProbeLists(Resource):
         probe_id = args['probe_id']
         with orm.db_session:
             probe = Probe.get(probe_id=probe_id)
-        if probe:
-            return {'message': 'Probe already exists!'}
+            if probe:
+                return {'message': 'Probe already exists!'}
         create_probe(probe_id)
         return {'message': 'Probe created!'}
 
