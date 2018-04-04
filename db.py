@@ -1,5 +1,5 @@
 from flask import Flask, request
-from flask_restful import Resource, Api, reqparse
+from flask_restful import Resource, Api, reqparse, abort, make_response, jsonify
 from pony import orm
 from datetime import datetime
 import os
@@ -11,6 +11,7 @@ db = orm.Database()
 
 class Probe(db.Entity):
     probe_id = orm.PrimaryKey(str)
+    name = orm.Optional(str)
     records = orm.Set('Record')
 
 class Record(db.Entity):
@@ -31,19 +32,28 @@ def add_temp_rec(temperature, time, probe_id):
 def create_probe(probe_id):
     Probe(probe_id=probe_id)
 
-parser = reqparse.RequestParser()
-parser.add_argument('probe_id')
+@orm.db_session
+def get_probe_or_404(probe_id):
+    probe = Probe.get(probe_id=probe_id)
+    if not probe:
+        abort(make_response(jsonify(message="Probe not found."), 404))
+    return probe
 
 class ProbeLists(Resource):
     def get(self):
         """list of probes"""
         with orm.db_session:
             return {
-                'data':[probe.probe_id for probe in Probe.select()] 
-            }
+                'data':[
+                    {'probe_id':probe.probe_id, 
+                    'name':probe.name
+                    } for probe in Probe.select()] 
+                }
 
     def post(self):
         """add probe"""
+        parser = reqparse.RequestParser()
+        parser.add_argument('probe_id')
         args = parser.parse_args()
         probe_id = args['probe_id']
         with orm.db_session:
@@ -53,6 +63,17 @@ class ProbeLists(Resource):
         create_probe(probe_id)
         return {'message': 'Probe created!'}
 
+    def put(self):
+        """edit probe"""
+        parser = reqparse.RequestParser()
+        parser.add_argument('probe_id')
+        parser.add_argument('name')
+        args = parser.parse_args()
+        probe_id = args['probe_id']
+        with orm.db_session:
+            probe = get_probe_or_404(probe_id)
+            probe.name = args['name']
+            return {'message': 'Probe updated!'}
 
 class Records(Resource):
     def get(self, probe_id):
@@ -61,9 +82,8 @@ class Records(Resource):
         parser.add_argument('offset', type=int)
         args = parser.parse_args()
         with orm.db_session:
-            records = Probe.get(
-                    probe_id=probe_id
-                    ).records.order_by(orm.desc(Record.time))[args['offset']:args['limit']]
+            probe = get_probe_or_404(probe_id)
+            records = probe.records.order_by(orm.desc(Record.time))[args['offset']:args['limit']]
             return {'data': [{
                 'temperature':r.temperature, 
                 'time':r.time.isoformat(),
