@@ -87,5 +87,6 @@ api.add_resource(Records, '/records/<probe_id>')
 if __name__ == '__main__':
     f = os.popen("""ifconfig wlan0 | awk '/inet addr/ {gsub("addr:", "", $2); print $2}'""")
     ip=f.read()
-    print(' * Access database locally on:', ip)
-    app.run(host='0.0.0.0', threaded=True, port=5000)
+    port = 5000
+    print(' * Access database locally on:', ip + ':' + str(5000))
+    app.run(host='0.0.0.0', threaded=True, port=port)

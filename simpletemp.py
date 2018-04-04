@@ -18,7 +18,9 @@ samping_interval = args['interval']
 local_probes_list = [] 
 
 def run():
-    for p in all_probes():
+    probes = all_probes()
+    print(len(probes), 'probes found.')
+    for p in probes:
         if p.probe_id not in local_probes_list:
             try:
                 r = requests.post(url + 'probes', data = {'probe_id':p.probe_id})
