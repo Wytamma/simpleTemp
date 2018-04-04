@@ -3,6 +3,7 @@ from flask_restful import Resource, Api, reqparse
 from pony import orm
 from datetime import datetime
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
 api = Api(app)
