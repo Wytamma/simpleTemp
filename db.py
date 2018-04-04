@@ -108,5 +108,5 @@ if __name__ == '__main__':
     f = os.popen("""ifconfig wlan0 | awk '/inet addr/ {gsub("addr:", "", $2); print $2}'""")
     ip=f.read()
     port = 5000
-    print(' * Access database locally on:', ip + ':' + str(5000))
+    print(' * Access database locally on:', ip.strip() + ':' + str(5000))
     app.run(host='0.0.0.0', threaded=True, port=port)
