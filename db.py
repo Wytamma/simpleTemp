@@ -6,6 +6,7 @@ import os
 from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 api = Api(app)
 
 db = orm.Database()
