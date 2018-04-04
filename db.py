@@ -2,6 +2,7 @@ from flask import Flask, request
 from flask_restful import Resource, Api, reqparse
 from pony import orm
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 api = Api(app)
@@ -84,4 +85,7 @@ api.add_resource(ProbeLists, '/probes')
 api.add_resource(Records, '/records/<probe_id>')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', threaded=True, debug=True, port=5000)
+    f = os.popen("""ifconfig wlan0 | awk '/inet addr/ {gsub("addr:", "", $2); print $2}'""")
+    ip=f.read()
+    print('Running database on:', ip)
+    app.run(host='0.0.0.0', threaded=True, port=5000)
