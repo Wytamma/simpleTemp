@@ -87,6 +87,7 @@ class ProbeLists(Resource):
 
 class Records(Resource):
     def get(self, probe_id):
+        print(request)
         parser = reqparse.RequestParser()
         parser.add_argument('limit', type=int)
         parser.add_argument('offset', type=int)
