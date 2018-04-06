@@ -15,6 +15,8 @@ class Probe(db.Entity):
     probe_id = orm.PrimaryKey(str)
     name = orm.Optional(str)
     records = orm.Set('Record')
+    max = orm.Required(float)
+    min = orm.Required(float)
 
 class Record(db.Entity):
     temperature = orm.Required(float)
@@ -32,7 +34,7 @@ def add_temp_rec(temperature, time, probe_id):
 
 @orm.db_session
 def create_probe(probe_id):
-    Probe(probe_id=probe_id, name=probe_id)
+    Probe(probe_id=probe_id, name=probe_id, max=30, min=20)
 
 @orm.db_session
 def get_probe_or_404(probe_id):
@@ -48,7 +50,9 @@ class ProbeLists(Resource):
             return {
                 'data':[
                     {'probe_id':probe.probe_id, 
-                    'name':probe.name
+                    'name':probe.name,
+                    'max':probe.max,
+                    'min':probe.min,
                     } for probe in Probe.select()] 
                 }
 
@@ -68,13 +72,17 @@ class ProbeLists(Resource):
     def put(self):
         """edit probe"""
         parser = reqparse.RequestParser()
-        parser.add_argument('probe_id')
+        parser.add_argument('probe_id', required=True)
         parser.add_argument('name')
+        parser.add_argument('max')
+        parser.add_argument('min')
         args = parser.parse_args()
         probe_id = args['probe_id']
         with orm.db_session:
             probe = get_probe_or_404(probe_id)
-            probe.name = args['name']
+            probe.name = args['name'] or probe.name
+            probe.max = args['max'] or probe.max
+            probe.min = args['min'] or probe.min
             return {'message': 'Probe updated!'}
 
 class Records(Resource):
@@ -90,7 +98,6 @@ class Records(Resource):
                 'temperature':r.temperature, 
                 'time':r.time.isoformat(),
                 'probe_id': probe_id,
-                'name':probe.name,
                 'id': r.id} for r in records]
                 }
 
