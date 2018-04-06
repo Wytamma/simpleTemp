@@ -71,8 +71,9 @@ class ProbeLists(Resource):
 
     def put(self):
         """edit probe"""
+         print(request)
         parser = reqparse.RequestParser()
-        parser.add_argument('probe_id', required=True)
+        parser.add_argument('probe_id')
         parser.add_argument('name')
         parser.add_argument('max')
         parser.add_argument('min')
@@ -87,7 +88,6 @@ class ProbeLists(Resource):
 
 class Records(Resource):
     def get(self, probe_id):
-        print(request)
         parser = reqparse.RequestParser()
         parser.add_argument('limit', type=int)
         parser.add_argument('offset', type=int)
