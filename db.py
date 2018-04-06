@@ -32,7 +32,7 @@ def add_temp_rec(temperature, time, probe_id):
 
 @orm.db_session
 def create_probe(probe_id):
-    Probe(probe_id=probe_id)
+    Probe(probe_id=probe_id, name=probe_id)
 
 @orm.db_session
 def get_probe_or_404(probe_id):
