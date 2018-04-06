@@ -71,7 +71,7 @@ class ProbeLists(Resource):
 
     def put(self):
         """edit probe"""
-         print(request)
+        print(request)
         parser = reqparse.RequestParser()
         parser.add_argument('probe_id')
         parser.add_argument('name')
@@ -85,6 +85,7 @@ class ProbeLists(Resource):
             probe.max = args['max'] or probe.max
             probe.min = args['min'] or probe.min
             return {'message': 'Probe updated!'}
+
 
 class Records(Resource):
     def get(self, probe_id):
