@@ -1,7 +1,7 @@
 import requests
 from datetime import datetime
 
-url = 'http://127.0.0.1:5000/'
+url = 'http://10.139.198.2:5000/'
 
 r = requests.post(url+'probes', data = {'probe_id':'example1'})
 print(r.json())

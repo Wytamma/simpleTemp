@@ -100,6 +100,7 @@ class Records(Resource):
                 'temperature':r.temperature, 
                 'time':r.time.isoformat(),
                 'probe_id': probe_id,
+                'name': probe.name
                 'id': r.id} for r in records]
                 }
 

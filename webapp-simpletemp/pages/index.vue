@@ -1,43 +1,181 @@
 <template>
-  <v-layout column justify-center align-center>
-    <v-flex xs12 sm8 md6>
-      <div class="text-xs-center">
-        <logo/>
-        <vuetify-logo/>
-      </div>
+  <div>
+    <v-btn color="primary" dark @click="initialise" class="mb-2">Refresh</v-btn>
+    <v-btn color="primary" dark class="mb-2">Download</v-btn>
+    <v-dialog v-model="dialog" max-width="500px">
+      
       <v-card>
-        <v-card-title class="headline">Welcome to the Vuetify + Nuxt.js template</v-card-title>
+        <v-card-title>
+          <span class="headline">Edit</span>
+        </v-card-title>
         <v-card-text>
-          <p>Vuetify is a progressive Material Design component framework for Vue.js. It was designed to empower developers to create amazing applications.</p>
-          <p>For more information on Vuetify, check out the <a href="https://vuetifyjs.com" target="_blank">documentation</a>.</p>
-          <p>If you have questions, please join the official <a href="https://chat.vuetifyjs.com/" target="_blank" title="chat">discord</a>.</p>
-          <p>Find a bug? Report it on the github <a href="https://github.com/vuetifyjs/vuetify/issues" target="_blank" title="contribute">issue board</a>.</p>
-          <p>Thank you for developing with Vuetify and I look forward to bringing more exciting features in the future.</p>
-          <div class="text-xs-right">
-            <em><small>&mdash; John Leider</small></em>
-          </div>
-          <hr class="my-3">
-          <a href="https://nuxtjs.org/" target="_blank">Nuxt Documentation</a>
-          <br>
-          <a href="https://github.com/nuxt/nuxt.js" target="_blank">Nuxt GitHub</a>
+          <v-container grid-list-md>
+            <v-layout wrap>
+              <v-flex xs12 sm6 md4>
+                <v-text-field label="Descriptive Name" v-model="editedItem.name"></v-text-field>
+              </v-flex>
+              <v-flex xs12 sm6 md4>
+                <v-text-field label="Max Temp" v-model="editedItem.max"></v-text-field>
+              </v-flex>
+              <v-flex xs12 sm6 md4>
+                <v-text-field label="Min Temp" v-model="editedItem.min"></v-text-field>
+              </v-flex>
+            </v-layout>
+          </v-container>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" flat nuxt to="/inspire">Continue</v-btn>
+          <v-btn color="blue darken-1" flat @click.native="close">Cancel</v-btn>
+          <v-btn color="blue darken-1" flat @click.native="save">Save</v-btn>
         </v-card-actions>
       </v-card>
-    </v-flex>
-  </v-layout>
+    </v-dialog>
+    <v-data-table
+      :headers="headers"
+      :items="items"
+      hide-actions
+      :loading="loading"
+      class="elevation-1"
+    >
+      <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+      <template slot="items" slot-scope="props">
+        <td class="text-xs-center">{{ props.item.time }}</td>
+        <td class="text-xs-center" ><b style="font-size: 28px">{{ props.item.temperature }}</b></td>
+        <td class="text-xs-center">{{ props.item.name }}</td>
+        <td class="text-xs-center">{{ props.item.max }}</td>
+        <td class="text-xs-center">{{ props.item.min }}</td>
+        <td class="text-xs-center">{{ props.item.probe_id }}</td>
+        <td class="justify-center layout px-0">
+          <v-btn icon class="mx-0" @click="editItem(props.item)">
+            <v-icon color="teal">edit</v-icon>
+          </v-btn>
+        </td>
+      </template>
+      <template slot="no-data">
+        <v-btn color="primary" @click="initialise">Reload</v-btn>
+      </template>
+    </v-data-table>
+  </div>
 </template>
 
-<script>
-import Logo from '~/components/Logo.vue'
-import VuetifyLogo from '~/components/VuetifyLogo.vue'
 
+
+<script>
+import axios from 'axios';
+const url = 'http://0.0.0.0:5000' //localhost
 export default {
-  components: {
-    Logo,
-    VuetifyLogo
+  data: function () {
+    return {
+      headers: [
+        {text: 'Time', value: 'time', align: 'center',},
+        {text: 'Temperature (˚C)', value: 'temperature', align: 'center',},
+        {text: 'Name', value: 'name', align: 'center',},
+        {text: 'Max (˚C)', value: 'max', align: 'center',},
+        {text: 'Min (˚C)', value: 'min', align: 'center',},
+        {text: 'Probe id', value: 'probe_id', align: 'center',},
+      ],
+      dialog: false,
+      interval: null,
+      probes: [],
+      errors: [],
+      items: [],
+      temperatures: [],
+      loading: true,
+      editedItem: {
+        name: '',
+        probe_id: '0',
+        max: 0,
+        min: 0,
+        temperature: 0,
+        time: ''
+      },
+      editedIndex: null
+    }
+  },
+  created() {
+    this.initialise()
+    this.interval = setInterval(function () {
+      this.updateTemps();
+    }.bind(this), 5000); 
+  },
+  methods: {
+    initialise () {
+      // get probes
+      this.items = []
+      this.loading = true
+      axios.get(url + '/probes')
+      .then(response => {
+        // JSON responses are automatically parsed.
+        this.probes = response.data.data
+        for (let i = 0; i < this.probes.length; i++) {
+          let probe = this.probes[i];
+          axios.get(url + '/records/' + probe.probe_id + '?limit=1')
+          .then(response => {
+            // JSON responses are automatically parsed.
+            let recordItem = response.data.data[0]
+            recordItem.max = probe.max
+            recordItem.min = probe.min
+            if (!probe.name) {
+              probe.name = probe.probe_id
+            }
+            recordItem.name = probe.name
+            this.items.push(recordItem)
+            this.loading = false
+          })
+          .catch(e => {
+            console.log(e);
+            this.errors.push(e)
+          })
+        }
+      })
+      .catch(e => {
+        console.log(e);
+        this.errors.push(e)
+      })
+    },
+    updateTemps () {
+      this.loading = true
+      for (let i = 0; i < this.items.length; i++) {
+          let probe_id = this.items[i].probe_id;
+          axios.get(url + '/records/' + probe_id + '?limit=1')
+          .then(response => {
+            // JSON responses are automatically parsed.
+            this.items[i].temperature = response.data.data[0].temperature
+            this.loading = false
+          })
+          .catch(e => {
+            console.log(e);
+            this.errors.push(e)
+          })
+        }
+    },
+    editItem (item) {
+      this.editedIndex = this.items.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      this.dialog = true
+    },
+    save () {
+      Object.assign(this.items[this.editedIndex], this.editedItem)
+      var params = new URLSearchParams();
+      params.append('name', this.editedItem.name);
+      params.append('max', this.editedItem.max);
+      params.append('min', this.editedItem.min);
+      params.append('probe_id', this.editedItem.probe_id);
+      axios.put(url + '/probes?', params)
+      .then(response => {
+        // JSON responses are automatically parsed.
+        console.log(response.data.message)
+      })
+      .catch(e => {
+        console.log(e);
+        this.errors.push(e)
+      })
+      this.close()
+    },
+    close () {
+      this.dialog = false
+    },
   }
 }
 </script>
+
