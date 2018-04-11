@@ -175,6 +175,9 @@ export default {
     close () {
       this.dialog = false
     },
+  },
+  beforeDestroy: function(){
+    clearInterval(this.interval);
   }
 }
 </script>
