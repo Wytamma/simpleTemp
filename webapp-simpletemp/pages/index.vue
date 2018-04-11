@@ -62,7 +62,7 @@
 
 <script>
 import axios from 'axios';
-const url = 'http://0.0.0.0:5000' //localhost
+const url = 'http://10.0.0.39:5000' //'http://0.0.0.0:5000' //localhost
 export default {
   data: function () {
     return {
@@ -141,6 +141,7 @@ export default {
           .then(response => {
             // JSON responses are automatically parsed.
             this.items[i].temperature = response.data.data[0].temperature
+            this.items[i].time = response.data.data[0].time
             this.loading = false
           })
           .catch(e => {
