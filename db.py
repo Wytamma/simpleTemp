@@ -14,10 +14,10 @@ api = Api(app)
 
 db = orm.Database()
 
-@app.route('/')
-def index():
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
     return render_template("index.html")
-    #return app.send_static_file('index.html')
 
 class Probe(db.Entity):
     probe_id = orm.PrimaryKey(str)
