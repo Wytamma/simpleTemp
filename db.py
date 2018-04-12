@@ -6,7 +6,9 @@ import os
 from flask_cors import CORS
 
 app = Flask(__name__,
-            template_folder = "./webapp-simpletemp/dist",)
+            template_folder = "./webapp-simpletemp/dist",
+            static_url_path='/dist',
+            static_folder='./webapp-simpletemp/dist',)
 
 CORS(app)
 api = Api(app)
@@ -15,8 +17,8 @@ db = orm.Database()
 
 @app.route('/')
 def index():
-    #return render_template("index.html")
-    return app.send_static_file('index.html')
+    return render_template("index.html")
+    #return app.send_static_file('index.html')
 
 class Probe(db.Entity):
     probe_id = orm.PrimaryKey(str)
