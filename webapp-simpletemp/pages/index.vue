@@ -62,7 +62,7 @@
 
 <script>
 import axios from 'axios';
-const url = 'http://0.0.0.0:5000' //localhost
+const url = 'http://10.3.141.1:5000' //localhost
 export default {
   data: function () {
     return {
