@@ -6,7 +6,7 @@ import os
 from flask_cors import CORS
 
 app = Flask(__name__,
-            static_folder = "./dist",
+            static_folder = "./dist/static",
             template_folder = "./dist")
             
 CORS(app)
@@ -14,9 +14,8 @@ api = Api(app)
 
 db = orm.Database()
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def catch_all(path):
+@app.route('/')
+def index():
     return render_template("index.html")
 
 class Probe(db.Entity):
