@@ -1,4 +1,4 @@
-from flask import Flask, request, abort, make_response, jsonify, send_from_directory, render_template
+from flask import Flask, request, abort, make_response, jsonify, send_file, render_template
 from flask_restful import Resource, Api, reqparse
 from pony import orm
 from datetime import datetime
@@ -21,8 +21,9 @@ def index():
     return render_template("index.html")
 
 
-@app.route('/data')
-def data():
+@app.route('/csv')
+def csv():
+    print("loading data...")
     with orm.db_session:
         return send_csv([   
             {'probe_id': record.probe.probe_id, 
@@ -33,7 +34,10 @@ def data():
             } for record in Record.select()],
         "temperature_data.csv", ["id", "probe_id", "name", "temperature", "time"], cache_timeout=0)
 
-
+@app.route('/database')
+def database():
+    return send_file('temperature_db.sqlite')
+    
 class Probe(db.Entity):
     probe_id = orm.PrimaryKey(str)
     name = orm.Optional(str)
