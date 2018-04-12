@@ -34,7 +34,7 @@ def csv():
             } for record in Record.select()],
         "temperature_data.csv", ["id", "probe_id", "name", "temperature", "time"], cache_timeout=0)
 
-@app.route('/database')
+@app.route('/database.sqlite')
 def database():
     return send_file('temperature_db.sqlite', attachment_filename='temperature_db.sqlite')
     
