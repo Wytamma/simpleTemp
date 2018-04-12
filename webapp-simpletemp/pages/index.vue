@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-btn color="primary" dark @click="initialise" class="mb-2">Refresh</v-btn>
-    <v-btn color="primary" dark class="mb-2">Download</v-btn>
+    <v-btn color="primary" dark :href="this.url + '/database'" class="mb-2">Download</v-btn>
     <v-dialog v-model="dialog" max-width="500px">
       
       <v-card>
@@ -62,7 +62,7 @@
 
 <script>
 import axios from 'axios';
-const url = 'http://10.0.0.39:5000' //'http://0.0.0.0:5000' //localhost
+const url = 'http://0.0.0.0:5000' //localhost
 export default {
   data: function () {
     return {
