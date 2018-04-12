@@ -36,7 +36,7 @@ def csv():
 
 @app.route('/database')
 def database():
-    return send_file('temperature_db.sqlite')
+    return send_file('temperature_db.sqlite', attachment_filename='temperature_db.sqlite')
     
 class Probe(db.Entity):
     probe_id = orm.PrimaryKey(str)
