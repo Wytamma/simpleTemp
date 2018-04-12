@@ -6,7 +6,8 @@ import os
 from flask_cors import CORS
 
 app = Flask(__name__,
-            template_folder = ".webapp-simpletemp/dist")
+            template_folder = "./webapp-simpletemp/dist",
+            static_folder='./webapp-simpletemp/dist')
 CORS(app)
 api = Api(app)
 
