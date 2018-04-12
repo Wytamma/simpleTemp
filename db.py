@@ -1,15 +1,21 @@
-from flask import Flask, request, abort, make_response, jsonify
+from flask import Flask, request, abort, make_response, jsonify, render_template
 from flask_restful import Resource, Api, reqparse
 from pony import orm
 from datetime import datetime
 import os
 from flask_cors import CORS
 
-app = Flask(__name__)
+app = Flask(__name__,
+            template_folder = ".webapp-simpletemp/dist")
 CORS(app)
 api = Api(app)
 
 db = orm.Database()
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    return render_template("index.html")
 
 class Probe(db.Entity):
     probe_id = orm.PrimaryKey(str)
