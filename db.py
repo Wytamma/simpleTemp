@@ -1,4 +1,4 @@
-from flask import Flask, request, abort, make_response, jsonify, render_template
+from flask import Flask, request, abort, make_response, jsonify, send_from_directory
 from flask_restful import Resource, Api, reqparse
 from pony import orm
 from datetime import datetime
@@ -16,7 +16,7 @@ db = orm.Database()
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-    return render_template("index.html")
+    return app.send_static_file('index.html')
 
 class Probe(db.Entity):
     probe_id = orm.PrimaryKey(str)
