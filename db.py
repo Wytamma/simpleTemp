@@ -31,7 +31,7 @@ def data():
             'time': record.time,
             'id': record.id
             } for record in Record.select()],
-        "temperature_data.csv", ["id", "probe_id", "name", "temperature", "time"])
+        "temperature_data.csv", ["id", "probe_id", "name", "temperature", "time"], cache_timeout=0)
 
 
 class Probe(db.Entity):
