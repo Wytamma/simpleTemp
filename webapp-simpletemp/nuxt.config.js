@@ -52,8 +52,8 @@ module.exports = {
   ** Axios module configuration
   */
   axios: {
-    host: 'localhost',
-    port: '5000'
+    host: process.env.API_HOST || 'localhost',
+    port: '5000',
     // See https://github.com/nuxt-community/axios-module#options
   },
 
