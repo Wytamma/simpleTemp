@@ -13,7 +13,6 @@ flask-restful = "*"
 requests = "*"
 "ds18b20" = {git = "https://github.com/wytamma/ds18b20.git"}
 flask-cors = "*"
-flask-csv = "*"
 
 
 [dev-packages]

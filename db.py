@@ -148,4 +148,4 @@ if __name__ == '__main__':
     ip=f.read()
     port = 5000
     print(' * Access database locally on:', ip.strip() + ':' + str(5000))
-    app.run(host='0.0.0.0', threaded=True, port=port)
+    app.run(host='0.0.0.0', port=port)
