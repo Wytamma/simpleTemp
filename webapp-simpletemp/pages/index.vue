@@ -102,13 +102,13 @@ export default {
       // get probes
       this.items = []
       this.loading = true
-      axios.get('/probes')
+      axios.get('probes')
       .then(response => {
         // JSON responses are automatically parsed.
         this.probes = response.data.data
         for (let i = 0; i < this.probes.length; i++) {
           let probe = this.probes[i];
-          axios.get('/records/' + probe.probe_id + '?limit=1')
+          axios.get('records/' + probe.probe_id + '?limit=1')
           .then(response => {
             // JSON responses are automatically parsed.
             let recordItem = response.data.data[0]
@@ -136,7 +136,7 @@ export default {
       this.loading = true
       for (let i = 0; i < this.items.length; i++) {
           let probe_id = this.items[i].probe_id;
-          axios.get('/records/' + probe_id + '?limit=1')
+          axios.get('records/' + probe_id + '?limit=1')
           .then(response => {
             // JSON responses are automatically parsed.
             this.items[i].temperature = response.data.data[0].temperature
@@ -161,7 +161,7 @@ export default {
       params.append('max', this.editedItem.max);
       params.append('min', this.editedItem.min);
       params.append('probe_id', this.editedItem.probe_id);
-      axios.put('/probes?', params)
+      axios.put('probes?', params)
       .then(response => {
         // JSON responses are automatically parsed.
         console.log(response.data.message)
