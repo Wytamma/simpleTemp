@@ -4,7 +4,6 @@ from pony import orm
 from datetime import datetime
 import os
 from flask_cors import CORS
-from flask_csv import send_csv
 
 app = Flask(__name__,
             static_folder = "./webapp-simpletemp/dist",
@@ -19,20 +18,6 @@ db = orm.Database()
 @app.route('/')
 def index():
     return render_template("index.html")
-
-
-@app.route('/csv')
-def csv():
-    print("loading data...")
-    with orm.db_session:
-        return send_csv([   
-            {'probe_id': record.probe.probe_id, 
-            'name': record.probe.name,
-            'temperature': record.temperature,
-            'time': record.time,
-            'id': record.id
-            } for record in Record.select()],
-        "temperature_data.csv", ["id", "probe_id", "name", "temperature", "time"], cache_timeout=0)
 
 @app.route('/database.sqlite')
 def database():
