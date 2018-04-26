@@ -1,1 +1,4 @@
 Pipfile.lock
+simpletemp.py
+database.sqlite
+temperature_db.sqlite

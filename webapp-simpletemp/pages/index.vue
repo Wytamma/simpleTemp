@@ -161,7 +161,7 @@ export default {
       params.append('max', this.editedItem.max);
       params.append('min', this.editedItem.min);
       params.append('probe_id', this.editedItem.probe_id);
-      axios.put('probes?', params)
+      axios.put('/probes?', params)
       .then(response => {
         // JSON responses are automatically parsed.
         console.log(response.data.message)
